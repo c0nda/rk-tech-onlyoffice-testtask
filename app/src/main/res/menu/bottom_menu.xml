@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/fragmentDocuments"
+        android:icon="@drawable/ic_document"
+        android:title="@string/documents" />
+    <item
+        android:id="@+id/fragmentRooms"
+        android:icon="@drawable/ic_folder"
+        android:title="@string/rooms" />
+    <item
+        android:id="@+id/fragmentTrash"
+        android:icon="@drawable/ic_trash"
+        android:title="@string/trash" />
+    <item
+        android:id="@+id/fragmentProfile"
+        android:icon="@drawable/ic_profile"
+        android:title="@string/profile" />
+</menu>
