@@ -7,6 +7,6 @@ import retrofit2.http.POST
 
 interface OnlyOfficeApi {
 
-    @POST("/api/2.0/authentication")
+    @POST("api/2.0/authentication/")
     suspend fun doAuth(@Body userAuthDataDTO: UserAuthDataDTO): AccessTokenDTO
 }
