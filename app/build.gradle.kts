@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.squareup.converter.gson)
     implementation(libs.kotlinx.serialization.json)
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)

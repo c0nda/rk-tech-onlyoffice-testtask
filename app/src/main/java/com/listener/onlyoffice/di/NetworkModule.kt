@@ -1,12 +1,12 @@
 package com.listener.onlyoffice.di
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.listener.onlyoffice.data.remote.retrofit.ApiKeyInterceptor
 import com.listener.onlyoffice.data.remote.retrofit.HostSelectionInterceptor
 import com.listener.onlyoffice.data.remote.retrofit.OnlyOfficeApi
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -21,9 +21,19 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(hostSelectionInterceptor: HostSelectionInterceptor): OkHttpClient =
+    fun provideApiKeyInterceptor(): ApiKeyInterceptor =
+        ApiKeyInterceptor
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(
+        hostSelectionInterceptor: HostSelectionInterceptor,
+        apiKeyInterceptor: ApiKeyInterceptor
+    ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(hostSelectionInterceptor)
+            .addInterceptor(apiKeyInterceptor)
+            .addInterceptor(HttpLoggingInterceptor().apply { setLevel(HttpLoggingInterceptor.Level.BODY) })
             .build()
 
     @Provides
