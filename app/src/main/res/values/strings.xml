@@ -13,4 +13,8 @@
     <string name="login">Login</string>
 
     <string name="logout">Logout</string>
+
+    <string name="invalid">Invalid portal or email</string>
+    <string name="failed">User authentication failed</string>
+    <string name="not_found">The user could not be found</string>
 </resources>
