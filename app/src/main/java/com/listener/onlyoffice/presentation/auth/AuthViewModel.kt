@@ -26,15 +26,6 @@ class AuthViewModel @Inject constructor(
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
-    private val _portal: MutableStateFlow<String> = MutableStateFlow("")
-    val portal = _portal.asStateFlow()
-
-    private val _email: MutableStateFlow<String> = MutableStateFlow("")
-    val email = _email.asStateFlow()
-
-    private val _password: MutableStateFlow<String> = MutableStateFlow("")
-    val password = _password.asStateFlow()
-
     private val _accessToken: MutableStateFlow<Request<AccessToken>> = MutableStateFlow(Request.Init())
     val accessToken = _accessToken.asStateFlow()
 
@@ -65,17 +56,5 @@ class AuthViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    fun setPortal(text: String) {
-        _portal.value = text
-    }
-
-    fun setEmail(text: String) {
-        _email.value = text
-    }
-
-    fun setPassword(text: String) {
-        _password.value = text
     }
 }

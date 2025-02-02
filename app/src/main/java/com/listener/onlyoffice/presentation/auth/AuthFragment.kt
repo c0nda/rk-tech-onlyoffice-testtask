@@ -1,13 +1,13 @@
 package com.listener.onlyoffice.presentation.auth
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -19,9 +19,7 @@ import com.listener.onlyoffice.DI
 import com.listener.onlyoffice.R
 import com.listener.onlyoffice.domain.model.AccessToken
 import com.listener.onlyoffice.utils.Request
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class AuthFragment : Fragment() {
 
@@ -48,57 +46,32 @@ class AuthFragment : Fragment() {
 
         val authViewModel = DI.appComponent.viewModelFactory().create(AuthViewModel::class.java)
 
+        var emailValid = false
+        var urlValid = false
+
         editTextPortal.doOnTextChanged { text, _, _, _ ->
             text?.let {
-                authViewModel.setPortal(text.toString())
+                urlValid = android.util.Patterns.WEB_URL.matcher(text.toString()).matches()
             }
         }
 
         editTextEmail.doOnTextChanged { text, _, _, _ ->
             text?.let {
-                authViewModel.setEmail(text.toString())
-            }
-        }
-
-        editTextPassword.doOnTextChanged { text, _, _, _ ->
-            text?.let {
-                authViewModel.setPassword(text.toString())
-            }
-        }
-
-        lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                authViewModel.portal.collect {
-                    editTextPortal.setText(it)
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                authViewModel.email.collect {
-                    editTextEmail.setText(it)
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                authViewModel.password.collect {
-                    editTextPassword.setText(it)
-                }
+                emailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(text.toString()).matches()
             }
         }
 
         buttonLogin.setOnClickListener {
-            authViewModel.loginUser(
-//                editTextPortal.text.toString(),
-//                editTextEmail.text.toString(),
-//                editTextPassword.text.toString()
-                "https://myportal0.onlyoffice.com/",
-                "egor.vorontsov03@mail.ru",
-                "myportal123"
-            )
+            if (emailValid && urlValid) {
+                authViewModel.loginUser(
+                editTextPortal.text.toString(),
+                editTextEmail.text.toString(),
+                editTextPassword.text.toString()
+                )
+            } else {
+                Toast.makeText(context, resources.getText(R.string.invalid), Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
 
         lifecycleScope.launch {
@@ -116,6 +89,11 @@ class AuthFragment : Fragment() {
                         is Request.Error -> {
                             buttonLogin.isClickable = true
                             progressIndicator.visibility = View.GONE
+                            Toast.makeText(
+                                context,
+                                (authViewModel.accessToken.value as Request.Error<AccessToken>).error?.message.toString(),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
 
                         is Request.Loading -> {
