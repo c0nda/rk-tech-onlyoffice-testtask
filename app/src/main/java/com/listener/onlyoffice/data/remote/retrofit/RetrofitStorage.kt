@@ -4,6 +4,7 @@ import com.listener.onlyoffice.data.remote.RemoteDataSource
 import com.listener.onlyoffice.data.remote.dto.UserAuthDataDTO
 import com.listener.onlyoffice.data.toDomain
 import com.listener.onlyoffice.domain.model.AccessToken
+import com.listener.onlyoffice.domain.model.UserProfile
 import com.listener.onlyoffice.utils.Request
 import com.listener.onlyoffice.utils.RequestUtils
 import kotlinx.coroutines.flow.Flow
@@ -21,6 +22,24 @@ class RetrofitStorage @Inject constructor(
                     password = password
                 )
             ).toDomain()
+        }
+    }
+
+    override suspend fun checkAuth(): Flow<Request<Boolean>> {
+        return RequestUtils.requestFlow {
+            onlyOfficeApi.checkAuth().toDomain()
+        }
+    }
+
+    override suspend fun getUserProfile(): Flow<Request<UserProfile>> {
+        return RequestUtils.requestFlow {
+            onlyOfficeApi.getProfile().toDomain()
+        }
+    }
+
+    override suspend fun logoutUser(): Flow<Request<Unit>> {
+        return RequestUtils.requestFlow {
+            onlyOfficeApi.logout()
         }
     }
 }

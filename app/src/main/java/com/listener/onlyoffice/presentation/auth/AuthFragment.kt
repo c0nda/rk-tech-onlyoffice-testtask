@@ -1,6 +1,7 @@
 package com.listener.onlyoffice.presentation.auth
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +13,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.listener.onlyoffice.DI
 import com.listener.onlyoffice.R
+import com.listener.onlyoffice.domain.model.AccessToken
 import com.listener.onlyoffice.utils.Request
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AuthFragment : Fragment() {
 
@@ -38,6 +44,7 @@ class AuthFragment : Fragment() {
         val editTextEmail = view.findViewById<EditText>(R.id.etEmail)
         val editTextPassword = view.findViewById<EditText>(R.id.etPassword)
         val buttonLogin = view.findViewById<Button>(R.id.bLogin)
+        val progressIndicator = view.findViewById<CircularProgressIndicator>(R.id.piLoading)
 
         val authViewModel = DI.appComponent.viewModelFactory().create(AuthViewModel::class.java)
 
@@ -85,26 +92,71 @@ class AuthFragment : Fragment() {
 
         buttonLogin.setOnClickListener {
             authViewModel.loginUser(
-                editTextPortal.text.toString(),
-                editTextEmail.text.toString(),
-                editTextPassword.text.toString()
+//                editTextPortal.text.toString(),
+//                editTextEmail.text.toString(),
+//                editTextPassword.text.toString()
+                "https://myportal0.onlyoffice.com/",
+                "egor.vorontsov03@mail.ru",
+                "myportal123"
             )
         }
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                authViewModel.requestResult.collect {
-                    when (authViewModel.requestResult.value) {
+                authViewModel.accessToken.collect {
+                    when (authViewModel.accessToken.value) {
+                        is Request.Init -> {
+                        }
+
                         is Request.Success -> {
-
+                            progressIndicator.visibility = View.GONE
+                            navigateToDocsFragment()
                         }
+
                         is Request.Error -> {
-
+                            buttonLogin.isClickable = true
+                            progressIndicator.visibility = View.GONE
                         }
-                        is Request.Loading -> {}
+
+                        is Request.Loading -> {
+                            buttonLogin.isClickable = false
+                            progressIndicator.visibility = View.VISIBLE
+                        }
                     }
                 }
             }
         }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                authViewModel.isAuth.collect {
+                    when (authViewModel.isAuth.value) {
+                        is Request.Init -> {
+                            authViewModel.checkAuth()
+                        }
+
+                        is Request.Success -> {
+                            if ((authViewModel.isAuth.value as Request.Success<Boolean>).data) {
+                                progressIndicator.visibility = View.GONE
+                                navigateToDocsFragment()
+                            }
+                        }
+
+                        is Request.Error -> {
+                        }
+
+                        is Request.Loading -> {
+                            buttonLogin.isClickable = false
+                            progressIndicator.visibility = View.VISIBLE
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun navigateToDocsFragment() {
+        val action = AuthFragmentDirections.actionAuthFragmentToDocsFragment()
+        findNavController().navigate(action)
     }
 }
