@@ -5,13 +5,13 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
 
-object HostSelectionInterceptor : Interceptor {
+class HostSelectionInterceptor : Interceptor {
 
     private var host: String? = null
     private var scheme: String? = null
 
-    fun setNewHost(newUrl: String) {
-        val url = newUrl.toHttpUrlOrNull()
+    fun setNewHost(newUrl: String?) {
+        val url = newUrl?.toHttpUrlOrNull()
         scheme = url?.scheme
         host = url?.host
     }

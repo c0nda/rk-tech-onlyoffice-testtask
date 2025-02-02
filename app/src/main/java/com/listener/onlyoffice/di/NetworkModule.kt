@@ -16,13 +16,11 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHostSelectionInterceptor(): HostSelectionInterceptor =
-        HostSelectionInterceptor
+    fun provideHostSelectionInterceptor() = HostSelectionInterceptor()
 
     @Provides
     @Singleton
-    fun provideApiKeyInterceptor(): ApiKeyInterceptor =
-        ApiKeyInterceptor
+    fun provideApiKeyInterceptor(): ApiKeyInterceptor = ApiKeyInterceptor()
 
     @Provides
     @Singleton
