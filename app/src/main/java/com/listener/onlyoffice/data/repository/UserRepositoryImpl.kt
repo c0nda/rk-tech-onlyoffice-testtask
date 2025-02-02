@@ -2,6 +2,7 @@ package com.listener.onlyoffice.data.repository
 
 import com.listener.onlyoffice.data.remote.RemoteDataSource
 import com.listener.onlyoffice.domain.model.AccessToken
+import com.listener.onlyoffice.domain.model.Page
 import com.listener.onlyoffice.domain.model.UserProfile
 import com.listener.onlyoffice.domain.repository.UserRepository
 import com.listener.onlyoffice.utils.Request
@@ -26,5 +27,21 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun logoutUser(): Flow<Request<Unit>> {
         return remoteDataSource.logoutUser()
+    }
+
+    override suspend fun getDocuments(): Flow<Request<Page>> {
+        return remoteDataSource.getDocuments()
+    }
+
+    override suspend fun getFolderContent(id: Long): Flow<Request<Page>> {
+        return remoteDataSource.getFolderContent(id)
+    }
+
+    override suspend fun getRooms(): Flow<Request<Page>> {
+        return remoteDataSource.getRooms()
+    }
+
+    override suspend fun getTrash(): Flow<Request<Page>> {
+        return remoteDataSource.getTrash()
     }
 }

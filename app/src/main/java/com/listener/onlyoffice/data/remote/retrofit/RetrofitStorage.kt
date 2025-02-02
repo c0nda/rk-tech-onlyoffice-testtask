@@ -4,6 +4,7 @@ import com.listener.onlyoffice.data.remote.RemoteDataSource
 import com.listener.onlyoffice.data.remote.dto.UserAuthDataDTO
 import com.listener.onlyoffice.data.toDomain
 import com.listener.onlyoffice.domain.model.AccessToken
+import com.listener.onlyoffice.domain.model.Page
 import com.listener.onlyoffice.domain.model.UserProfile
 import com.listener.onlyoffice.utils.Request
 import com.listener.onlyoffice.utils.RequestUtils
@@ -40,6 +41,30 @@ class RetrofitStorage @Inject constructor(
     override suspend fun logoutUser(): Flow<Request<Unit>> {
         return RequestUtils.requestFlow {
             onlyOfficeApi.logout()
+        }
+    }
+
+    override suspend fun getDocuments(): Flow<Request<Page>> {
+        return RequestUtils.requestFlow {
+            onlyOfficeApi.getDocumentsSection().toDomain()
+        }
+    }
+
+    override suspend fun getFolderContent(id: Long): Flow<Request<Page>> {
+        return RequestUtils.requestFlow {
+            onlyOfficeApi.getFolderContent(id).toDomain()
+        }
+    }
+
+    override suspend fun getRooms(): Flow<Request<Page>> {
+        return RequestUtils.requestFlow {
+            onlyOfficeApi.getRooms().toDomain()
+        }
+    }
+
+    override suspend fun getTrash(): Flow<Request<Page>> {
+        return RequestUtils.requestFlow {
+            onlyOfficeApi.getTrash().toDomain()
         }
     }
 }

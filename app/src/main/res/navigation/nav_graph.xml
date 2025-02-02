@@ -16,15 +16,15 @@
     </fragment>
     <fragment
         android:id="@+id/docsFragment"
-        android:name="com.listener.onlyoffice.presentation.docs.DocsFragment"
+        android:name="com.listener.onlyoffice.presentation.documents.docs.DocsFragment"
         android:label="DocsFragment" />
     <fragment
         android:id="@+id/roomsFragment"
-        android:name="com.listener.onlyoffice.presentation.rooms.RoomsFragment"
+        android:name="com.listener.onlyoffice.presentation.documents.rooms.RoomsFragment"
         android:label="RoomsFragment" />
     <fragment
         android:id="@+id/trashFragment"
-        android:name="com.listener.onlyoffice.presentation.trash.TrashFragment"
+        android:name="com.listener.onlyoffice.presentation.documents.trash.TrashFragment"
         android:label="TrashFragment" />
     <fragment
         android:id="@+id/profileFragment"
