@@ -5,12 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.listener.onlyoffice.data.local.DataStoreManager
 import com.listener.onlyoffice.data.remote.retrofit.ApiKeyInterceptor
 import com.listener.onlyoffice.domain.model.UserProfile
-import com.listener.onlyoffice.domain.usecase.CheckUserAuthenticationUseCase
 import com.listener.onlyoffice.domain.usecase.GetUserProfileUseCase
 import com.listener.onlyoffice.domain.usecase.LogoutUserUseCase
 import com.listener.onlyoffice.utils.Constants
 import com.listener.onlyoffice.utils.Request
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -48,5 +48,12 @@ class ProfileViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    suspend fun getPortal(): String {
+        val portal = viewModelScope.async(Dispatchers.IO) {
+            dataStoreManager.get(Constants.PORTAL)!!
+        }
+        return portal.await()
     }
 }

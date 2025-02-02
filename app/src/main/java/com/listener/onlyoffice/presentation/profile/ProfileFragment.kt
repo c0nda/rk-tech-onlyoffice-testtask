@@ -1,7 +1,6 @@
 package com.listener.onlyoffice.presentation.profile
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -66,7 +65,7 @@ class ProfileFragment : Fragment() {
                                 tvUserName.text = data.displayName
                             }
                             Glide.with(view)
-                                .load("https://myportal0.onlyoffice.com/" + data.avatar)
+                                .load(profileViewModel.getPortal() + data.avatar)
                                 .circleCrop()
                                 .into(ivAvatar)
                         }
@@ -84,21 +83,9 @@ class ProfileFragment : Fragment() {
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                profileViewModel.isLogout.collect {
-                    when (profileViewModel.isLogout.value) {
-                        is Request.Init -> {
-                        }
-
-                        is Request.Success -> {
-                            navigateToLogin()
-                        }
-
-                        is Request.Error -> {
-                        }
-
-                        is Request.Loading -> {
-
-                        }
+                profileViewModel.isLogout.collect { request ->
+                    if (request is Request.Success) {
+                        navigateToLogin()
                     }
                 }
             }
