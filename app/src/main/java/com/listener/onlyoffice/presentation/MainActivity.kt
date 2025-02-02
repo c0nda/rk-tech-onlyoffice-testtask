@@ -1,17 +1,21 @@
 package com.listener.onlyoffice.presentation
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.listener.onlyoffice.DI
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.listener.onlyoffice.R
-import com.listener.onlyoffice.data.remote.retrofit.RetrofitStorage
-import com.listener.onlyoffice.data.repository.AuthRepositoryImpl
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+        bottomNavigationView.setupWithNavController(findNavController(R.id.main_container))
     }
 }

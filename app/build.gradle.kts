@@ -70,4 +70,10 @@ dependencies {
     // Navigation
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
+
+    // DataStore
+    implementation (libs.androidx.datastore.preferences)
+
+    // Glide
+    implementation (libs.glide)
 }

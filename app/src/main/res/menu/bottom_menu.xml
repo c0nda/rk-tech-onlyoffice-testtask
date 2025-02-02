@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/fragmentDocuments"
+        android:id="@+id/docsFragment"
         android:icon="@drawable/ic_document"
         android:title="@string/documents" />
     <item
-        android:id="@+id/fragmentRooms"
+        android:id="@+id/roomsFragment"
         android:icon="@drawable/ic_folder"
         android:title="@string/rooms" />
     <item
-        android:id="@+id/fragmentTrash"
+        android:id="@+id/trashFragment"
         android:icon="@drawable/ic_trash"
         android:title="@string/trash" />
     <item
-        android:id="@+id/fragmentProfile"
+        android:id="@+id/profileFragment"
         android:icon="@drawable/ic_profile"
         android:title="@string/profile" />
 </menu>
