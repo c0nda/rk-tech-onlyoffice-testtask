@@ -11,8 +11,6 @@ import com.listener.onlyoffice.domain.usecase.CheckUserAuthenticationUseCase
 import com.listener.onlyoffice.utils.Constants
 import com.listener.onlyoffice.utils.Request
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -48,9 +46,9 @@ class AuthViewModel @Inject constructor(
     fun checkAuth() {
         viewModelScope.launch(Dispatchers.IO) {
             val portal = dataStoreManager.get(Constants.PORTAL)
+            apiKeyInterceptor.setApiKey(dataStoreManager.get(Constants.API_KEY))
             if (!portal.isNullOrEmpty()) {
                 hostSelectionInterceptor.setNewHost(portal)
-                apiKeyInterceptor.setApiKey(dataStoreManager.get(Constants.API_KEY))
                 checkUserAuthenticationUseCase.execute().collect { request ->
                     _isAuth.value = request
                 }

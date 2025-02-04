@@ -17,7 +17,6 @@ import com.bumptech.glide.Glide
 import com.listener.onlyoffice.DI
 import com.listener.onlyoffice.R
 import com.listener.onlyoffice.domain.model.UserProfile
-import com.listener.onlyoffice.presentation.auth.AuthFragmentDirections
 import com.listener.onlyoffice.utils.Request
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,8 +46,6 @@ class ProfileFragment : Fragment() {
 
         val profileViewModel =
             DI.appComponent.viewModelFactory().create(ProfileViewModel::class.java)
-
-        profileViewModel.getProfile()
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

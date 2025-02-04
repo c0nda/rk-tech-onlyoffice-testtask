@@ -20,7 +20,6 @@ abstract class ViewModelModule {
     @ViewModelKey(AuthViewModel::class)
     abstract fun bindAuthViewModel(viewModel: AuthViewModel): ViewModel
 
-    @Singleton
     @Binds
     @IntoMap
     @ViewModelKey(ProfileViewModel::class)

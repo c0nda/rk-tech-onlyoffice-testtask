@@ -29,7 +29,11 @@ class ProfileViewModel @Inject constructor(
     private val _isLogout: MutableStateFlow<Request<Unit>> = MutableStateFlow(Request.Init())
     val isLogout = _isLogout.asStateFlow()
 
-    fun getProfile() {
+    init {
+        getProfile()
+    }
+
+    private fun getProfile() {
         viewModelScope.launch(Dispatchers.IO) {
             apiKeyInterceptor.setApiKey(dataStoreManager.get(Constants.API_KEY))
             getUserProfileUseCase.execute().collect { request ->
@@ -41,11 +45,11 @@ class ProfileViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch(Dispatchers.IO) {
             logoutUserUseCase.execute().collect { request ->
-                _isLogout.value = request
                 if (request is Request.Success) {
                     dataStoreManager.save(Constants.PORTAL, "")
                     dataStoreManager.save(Constants.API_KEY, "")
                 }
+                _isLogout.value = request
             }
         }
     }
