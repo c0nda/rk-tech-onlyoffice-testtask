@@ -1,6 +1,5 @@
 package com.listener.onlyoffice.presentation.documents.docs
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.listener.onlyoffice.data.local.DataStoreManager
@@ -26,11 +25,7 @@ class DocsViewModel @Inject constructor(
     private val _states: MutableStateFlow<List<Page>> = MutableStateFlow(emptyList())
     val states = _states.asStateFlow()
 
-    init {
-        getDocuments()
-    }
-
-    private fun getDocuments() {
+    fun getDocuments() {
         viewModelScope.launch(Dispatchers.IO) {
             apiKeyInterceptor.setApiKey(dataStoreManager.get(Constants.API_KEY))
             getDocumentsUseCase.execute().collect { request ->

@@ -80,6 +80,8 @@ class DocsFragment : Fragment() {
                         data.addAll(pageList.last().folders.map { ListItem.FolderItem(it) })
                         data.addAll(pageList.last().files.map { ListItem.FileItem(it) })
                         documentsAdapter.submitList(data)
+                    } else {
+                        docsViewModel.getDocuments()
                     }
                 }
             }
