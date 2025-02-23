@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.listener.onlyoffice.DI
 import com.listener.onlyoffice.R
+import com.listener.onlyoffice.databinding.DocsFragmentBinding
+import com.listener.onlyoffice.presentation.MainActivity
 import com.listener.onlyoffice.presentation.documents.common.DocumentsAdapter
 import com.listener.onlyoffice.presentation.documents.common.DocumentsListItemClickListener
 import com.listener.onlyoffice.presentation.documents.common.ListItem
@@ -24,31 +26,30 @@ import kotlinx.coroutines.launch
 
 class DocsFragment : Fragment() {
 
+    private var _binding: DocsFragmentBinding? = null
+    private val binding
+        get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.docs_fragment, container, false)
+    ): View {
+        _binding = DocsFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val llBottomNavView =
-            requireActivity().findViewById<LinearLayout>(R.id.ll_bottom_navigation_view)
-        llBottomNavView.visibility = View.VISIBLE
+        (requireActivity() as MainActivity).binding.llBottomNavigationView.visibility = View.VISIBLE
 
-        val tvDocuments = view.findViewById<TextView>(R.id.tvDocuments)
-        val ibBack = view.findViewById<ImageButton>(R.id.ibBack)
-        val rvFiles = view.findViewById<RecyclerView>(R.id.rvFiles)
-
-        tvDocuments.text = getString(R.string.documents)
+        binding.tvDocuments.text = getString(R.string.documents)
 
         val docsViewModel = DI.appComponent.viewModelFactory().create(DocsViewModel::class.java)
 
         if (docsViewModel.states.value.size > 1) {
-            ibBack.visibility = View.VISIBLE
+            binding.ibBack.visibility = View.VISIBLE
         }
 
         val documentsAdapter = DocumentsAdapter(object : DocumentsListItemClickListener {
@@ -60,17 +61,17 @@ class DocsFragment : Fragment() {
 
                     is ListItem.FolderItem -> {
                         docsViewModel.getFolderContent(listItem.folder.id)
-                        ibBack.visibility = View.VISIBLE
-                        tvDocuments.text = listItem.folder.title
+                        binding.ibBack.visibility = View.VISIBLE
+                        binding.tvDocuments.text = listItem.folder.title
                     }
                 }
             }
         })
-        rvFiles.adapter = documentsAdapter
-        rvFiles.layoutManager = LinearLayoutManager(this.context)
+        binding.rvFiles.adapter = documentsAdapter
+        binding.rvFiles.layoutManager = LinearLayoutManager(this.context)
         val dividerItemDecoration = DividerItemDecoration(this.context, RecyclerView.VERTICAL)
         dividerItemDecoration.setDrawable(ResourcesCompat.getDrawable(resources, R.drawable.divider, resources.newTheme())!!)
-        rvFiles.addItemDecoration(dividerItemDecoration)
+        binding.rvFiles.addItemDecoration(dividerItemDecoration)
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -87,11 +88,11 @@ class DocsFragment : Fragment() {
             }
         }
 
-        ibBack.setOnClickListener {
+        binding.ibBack.setOnClickListener {
             docsViewModel.goBack()
             if (docsViewModel.states.value.size <= 1) {
-                ibBack.visibility = View.GONE
-                tvDocuments.text = getString(R.string.documents)
+                binding.ibBack.visibility = View.GONE
+                binding.tvDocuments.text = getString(R.string.documents)
             }
         }
     }

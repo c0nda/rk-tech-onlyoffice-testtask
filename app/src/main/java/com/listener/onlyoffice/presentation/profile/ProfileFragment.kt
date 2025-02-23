@@ -4,10 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -15,8 +11,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.listener.onlyoffice.DI
-import com.listener.onlyoffice.R
+import com.listener.onlyoffice.databinding.ProfileFragmentBinding
 import com.listener.onlyoffice.domain.model.UserProfile
+import com.listener.onlyoffice.presentation.MainActivity
 import com.listener.onlyoffice.utils.Request
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,25 +21,23 @@ import kotlinx.coroutines.withContext
 
 class ProfileFragment : Fragment() {
 
+    private var _binding: ProfileFragmentBinding? = null
+    private val binding
+        get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.profile_fragment, container, false)
+    ): View {
+        _binding = ProfileFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val llBottomNavView =
-            requireActivity().findViewById<LinearLayout>(R.id.ll_bottom_navigation_view)
-        llBottomNavView.visibility = View.VISIBLE
-
-        val ivAvatar = view.findViewById<ImageView>(R.id.ivAvatar)
-        val tvEmail = view.findViewById<TextView>(R.id.tvEmail)
-        val tvUserName = view.findViewById<TextView>(R.id.tvUserName)
-        val buttonLogout = view.findViewById<Button>(R.id.bLogout)
+        (requireActivity() as MainActivity).binding.llBottomNavigationView.visibility = View.VISIBLE
 
         val profileViewModel =
             DI.appComponent.viewModelFactory().create(ProfileViewModel::class.java)
@@ -58,13 +53,13 @@ class ProfileFragment : Fragment() {
                             val data =
                                 (profileViewModel.profile.value as Request.Success<UserProfile>).data
                             withContext(Dispatchers.Main) {
-                                tvEmail.text = data.email
-                                tvUserName.text = data.displayName
+                                binding.tvEmail.text = data.email
+                                binding.tvUserName.text = data.displayName
                             }
                             Glide.with(view)
                                 .load(profileViewModel.getPortal() + data.avatar)
                                 .circleCrop()
-                                .into(ivAvatar)
+                                .into(binding.ivAvatar)
                         }
 
                         is Request.Error -> {
@@ -88,7 +83,7 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        buttonLogout.setOnClickListener {
+        binding.bLogout.setOnClickListener {
             profileViewModel.logout()
         }
     }

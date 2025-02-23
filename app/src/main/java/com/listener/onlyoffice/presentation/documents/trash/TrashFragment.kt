@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.listener.onlyoffice.DI
 import com.listener.onlyoffice.R
+import com.listener.onlyoffice.databinding.DocsFragmentBinding
+import com.listener.onlyoffice.presentation.MainActivity
 import com.listener.onlyoffice.presentation.documents.common.DocumentsAdapter
 import com.listener.onlyoffice.presentation.documents.common.DocumentsListItemClickListener
 import com.listener.onlyoffice.presentation.documents.common.ListItem
@@ -25,27 +27,26 @@ import kotlinx.coroutines.launch
 
 class TrashFragment : Fragment() {
 
+    private var _binding: DocsFragmentBinding? = null
+    private val binding
+        get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.docs_fragment, container, false)
+    ): View {
+        _binding = DocsFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val llBottomNavView =
-            requireActivity().findViewById<LinearLayout>(R.id.ll_bottom_navigation_view)
-        llBottomNavView.visibility = View.VISIBLE
+        (requireActivity() as MainActivity).binding.llBottomNavigationView.visibility = View.VISIBLE
 
-        val tvDocuments = view.findViewById<TextView>(R.id.tvDocuments)
-        val ibBack = view.findViewById<ImageButton>(R.id.ibBack)
-        val rvFiles = view.findViewById<RecyclerView>(R.id.rvFiles)
-
-        ibBack.visibility = View.GONE
-        tvDocuments.text = getString(R.string.trash)
+        binding.ibBack.visibility = View.GONE
+        binding.tvDocuments.text = getString(R.string.trash)
 
         val trashViewModel = DI.appComponent.viewModelFactory().create(TrashViewModel::class.java)
 
@@ -60,8 +61,8 @@ class TrashFragment : Fragment() {
                 }
             }
         })
-        rvFiles.adapter = documentsAdapter
-        rvFiles.layoutManager = LinearLayoutManager(this.context)
+        binding.rvFiles.adapter = documentsAdapter
+        binding.rvFiles.layoutManager = LinearLayoutManager(this.context)
         val dividerItemDecoration = DividerItemDecoration(this.context, RecyclerView.VERTICAL)
         dividerItemDecoration.setDrawable(
             ResourcesCompat.getDrawable(
@@ -70,7 +71,7 @@ class TrashFragment : Fragment() {
                 resources.newTheme()
             )!!
         )
-        rvFiles.addItemDecoration(dividerItemDecoration)
+        binding.rvFiles.addItemDecoration(dividerItemDecoration)
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

@@ -17,56 +17,55 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.listener.onlyoffice.DI
 import com.listener.onlyoffice.R
+import com.listener.onlyoffice.databinding.AuthFragmentBinding
 import com.listener.onlyoffice.domain.model.AccessToken
+import com.listener.onlyoffice.presentation.MainActivity
 import com.listener.onlyoffice.utils.Request
 import kotlinx.coroutines.launch
 
 class AuthFragment : Fragment() {
 
+    private var _binding: AuthFragmentBinding? = null
+    private val binding get() = _binding!!
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.auth_fragment, container, false)
+    ): View {
+        _binding = AuthFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val llBottomNavView =
-            requireActivity().findViewById<LinearLayout>(R.id.ll_bottom_navigation_view)
-        llBottomNavView.visibility = View.GONE
-
-        val editTextPortal = view.findViewById<EditText>(R.id.etPortal)
-        val editTextEmail = view.findViewById<EditText>(R.id.etEmail)
-        val editTextPassword = view.findViewById<EditText>(R.id.etPassword)
-        val buttonLogin = view.findViewById<Button>(R.id.bLogin)
-        val progressIndicator = view.findViewById<CircularProgressIndicator>(R.id.piLoading)
+        (requireActivity() as MainActivity).binding.llBottomNavigationView.visibility = View.GONE
 
         val authViewModel = DI.appComponent.viewModelFactory().create(AuthViewModel::class.java)
 
         var emailValid = false
         var urlValid = false
 
-        editTextPortal.doOnTextChanged { text, _, _, _ ->
+        binding.etPortal.doOnTextChanged { text, _, _, _ ->
             text?.let {
                 urlValid = android.util.Patterns.WEB_URL.matcher(text.toString()).matches()
             }
         }
 
-        editTextEmail.doOnTextChanged { text, _, _, _ ->
+        binding.etEmail.doOnTextChanged { text, _, _, _ ->
             text?.let {
                 emailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(text.toString()).matches()
             }
         }
 
-        buttonLogin.setOnClickListener {
+        binding.bLogin.setOnClickListener {
             if (emailValid && urlValid) {
                 authViewModel.loginUser(
-                editTextPortal.text.toString(),
-                editTextEmail.text.toString(),
-                editTextPassword.text.toString()
+                binding.etPortal.text.toString(),
+                binding.etEmail.text.toString(),
+                binding.etPassword.text.toString()
                 )
             } else {
                 Toast.makeText(context, resources.getText(R.string.invalid), Toast.LENGTH_SHORT)
@@ -82,13 +81,13 @@ class AuthFragment : Fragment() {
                         }
 
                         is Request.Success -> {
-                            progressIndicator.visibility = View.GONE
+                            binding.piLoading.visibility = View.GONE
                             navigateToDocsFragment()
                         }
 
                         is Request.Error -> {
-                            buttonLogin.isClickable = true
-                            progressIndicator.visibility = View.GONE
+                            binding.bLogin.isClickable = true
+                            binding.piLoading.visibility = View.GONE
                             Toast.makeText(
                                 context,
                                 (authViewModel.accessToken.value as Request.Error<AccessToken>).error?.message.toString(),
@@ -97,8 +96,8 @@ class AuthFragment : Fragment() {
                         }
 
                         is Request.Loading -> {
-                            buttonLogin.isClickable = false
-                            progressIndicator.visibility = View.VISIBLE
+                            binding.bLogin.isClickable = false
+                            binding.piLoading.visibility = View.VISIBLE
                         }
                     }
                 }
@@ -115,7 +114,7 @@ class AuthFragment : Fragment() {
 
                         is Request.Success -> {
                             if ((authViewModel.isAuth.value as Request.Success<Boolean>).data) {
-                                progressIndicator.visibility = View.GONE
+                                binding.piLoading.visibility = View.GONE
                                 navigateToDocsFragment()
                             }
                         }
@@ -124,13 +123,18 @@ class AuthFragment : Fragment() {
                         }
 
                         is Request.Loading -> {
-                            buttonLogin.isClickable = false
-                            progressIndicator.visibility = View.VISIBLE
+                            binding.bLogin.isClickable = false
+                            binding.piLoading.visibility = View.VISIBLE
                         }
                     }
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun navigateToDocsFragment() {

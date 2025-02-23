@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -17,20 +15,26 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.listener.onlyoffice.DI
 import com.listener.onlyoffice.R
+import com.listener.onlyoffice.databinding.DocsFragmentBinding
+import com.listener.onlyoffice.presentation.MainActivity
 import com.listener.onlyoffice.presentation.documents.common.DocumentsAdapter
 import com.listener.onlyoffice.presentation.documents.common.DocumentsListItemClickListener
 import com.listener.onlyoffice.presentation.documents.common.ListItem
-import com.listener.onlyoffice.presentation.documents.docs.DocsViewModel
 import kotlinx.coroutines.launch
 
 class RoomsFragment : Fragment() {
+
+    private var _binding: DocsFragmentBinding? = null
+    private val binding
+        get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.docs_fragment, container, false)
+    ): View {
+        _binding = DocsFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -40,16 +44,14 @@ class RoomsFragment : Fragment() {
             requireActivity().findViewById<LinearLayout>(R.id.ll_bottom_navigation_view)
         llBottomNavView.visibility = View.VISIBLE
 
-        val tvDocuments = view.findViewById<TextView>(R.id.tvDocuments)
-        val ibBack = view.findViewById<ImageButton>(R.id.ibBack)
-        val rvFiles = view.findViewById<RecyclerView>(R.id.rvFiles)
+        (requireActivity() as MainActivity).binding.llBottomNavigationView.visibility = View.VISIBLE
 
-        tvDocuments.text = getString(R.string.rooms)
+        binding.tvDocuments.text = getString(R.string.rooms)
 
         val roomsViewModel = DI.appComponent.viewModelFactory().create(RoomsViewModel::class.java)
 
         if (roomsViewModel.states.value.size > 1) {
-            ibBack.visibility = View.VISIBLE
+            binding.ibBack.visibility = View.VISIBLE
         }
 
         val documentsAdapter = DocumentsAdapter(object : DocumentsListItemClickListener {
@@ -61,17 +63,17 @@ class RoomsFragment : Fragment() {
 
                     is ListItem.FolderItem -> {
                         roomsViewModel.getFolderContent(listItem.folder.id)
-                        ibBack.visibility = View.VISIBLE
-                        tvDocuments.text = listItem.folder.title
+                        binding.ibBack.visibility = View.VISIBLE
+                        binding.tvDocuments.text = listItem.folder.title
                     }
                 }
             }
         })
-        rvFiles.adapter = documentsAdapter
-        rvFiles.layoutManager = LinearLayoutManager(this.context)
+        binding.rvFiles.adapter = documentsAdapter
+        binding.rvFiles.layoutManager = LinearLayoutManager(this.context)
         val dividerItemDecoration = DividerItemDecoration(this.context, RecyclerView.VERTICAL)
         dividerItemDecoration.setDrawable(ResourcesCompat.getDrawable(resources, R.drawable.divider, resources.newTheme())!!)
-        rvFiles.addItemDecoration(dividerItemDecoration)
+        binding.rvFiles.addItemDecoration(dividerItemDecoration)
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -86,11 +88,11 @@ class RoomsFragment : Fragment() {
             }
         }
 
-        ibBack.setOnClickListener {
+        binding.ibBack.setOnClickListener {
             roomsViewModel.goBack()
             if (roomsViewModel.states.value.size <= 1) {
-                ibBack.visibility = View.GONE
-                tvDocuments.text = getString(R.string.rooms)
+                binding.ibBack.visibility = View.GONE
+                binding.tvDocuments.text = getString(R.string.rooms)
             }
         }
     }
