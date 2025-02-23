@@ -31,7 +31,6 @@ class NetworkModule {
         OkHttpClient.Builder()
             .addInterceptor(hostSelectionInterceptor)
             .addInterceptor(apiKeyInterceptor)
-            .addInterceptor(HttpLoggingInterceptor().apply { setLevel(HttpLoggingInterceptor.Level.BODY) })
             .build()
 
     @Provides
