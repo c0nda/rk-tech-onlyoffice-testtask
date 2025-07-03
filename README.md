@@ -1,6 +1,6 @@
 # OnlyOffice prototype app
 
-Android app that is prototype of OnlyOffice android application. Done according to the test task from YADRO.
+Android app that is prototype of OnlyOffice android application. Done according to the test task from RK Tech.
 
 ## Tech stack
 
